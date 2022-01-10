@@ -55,11 +55,13 @@ jobs:
         run: reticulate::install_miniconda()
 
       - name: Install Numpy
-        run: reticulate::py_install(envname = "r-reticulate", packages = "numpy", pip = TRUE)
+        run: |
+          reticulate::py_install(envname = "r-reticulate", packages = "numpy", 
+                                 pip = TRUE, pip_ignore_installed = TRUE)
 
       - name: Confirm Python and import Numpy
         run: |
-          reticulate::py_config()     |> print()
-          reticulate::import('numpy') |> print()
+          print(reticulate::py_config())
+          print(reticulate::import('numpy'))
 
       - uses: r-lib/actions/check-r-package@v2
