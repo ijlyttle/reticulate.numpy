@@ -56,14 +56,9 @@ jobs:
 
       - name: Install Numpy
         run: |
-          reticulate::py_install(envname = "r-reticulate", packages = "numpy",
+          reticulate::py_install(packages = c("numpy", "pandas"),
+                                 envname = "r-reticulate",
                                  pip = TRUE, pip_ignore_installed = TRUE)
-
-      - name: Install Pandas
-        run: |
-          reticulate::py_install(envname = "r-reticulate", packages = "pandas",
-                                 pip = TRUE, pip_ignore_installed = TRUE)
-
 
       - name: Confirm Python and import Numpy, Pandas
         run: |
