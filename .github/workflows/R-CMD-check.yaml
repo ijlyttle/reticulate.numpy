@@ -43,4 +43,18 @@ jobs:
         with:
           extra-packages: rcmdcheck
 
+      - name: Install Python
+        run: |
+          Rscript -e "reticulate::install_miniconda()"
+          Rscript -e "reticulate::conda_create('r-reticulate')"
+
+      - name: Install Numpy
+        run: |
+          Rscript -e "reticulate::conda_install('r-reticulate', packages = 'numpy')"
+
+      - name: Confirm Python and import Numpy
+        run: |
+          Rscript -e "reticulate::py_config()"
+          Rscript -e "reticulate::import('numpy')"
+
       - uses: r-lib/actions/check-r-package@v1
