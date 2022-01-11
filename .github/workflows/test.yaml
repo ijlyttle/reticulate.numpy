@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
   steps:
-    - name:test
+    - name: test
       run: |
         RMD_PATH=($(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '[.]Rmd$'))
-        echo RMD_PATH
+        echo $RMD_PATH
