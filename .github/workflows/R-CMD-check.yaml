@@ -1,12 +1,17 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/master/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
+  workflow_dispatch:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
 
 name: R-CMD-check
+
+defaults:
+  run:
+    shell: Rscript {0}
 
 jobs:
   R-CMD-check:
@@ -31,30 +36,34 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rcmdcheck
+          extra-packages: rcmdcheck remotes
 
-      - name: Install Python
-        run: |
-          Rscript -e "reticulate::install_miniconda()"
-          Rscript -e "reticulate::conda_create('r-reticulate')"
+      - name: Install dev reticulate
+        run: remotes::install_github("rstudio/reticulate")
+
+      - name: Install miniconda
+        run: reticulate::install_miniconda()
 
       - name: Install Numpy
         run: |
-          Rscript -e "reticulate::conda_install('r-reticulate', packages = 'numpy')"
+          reticulate::py_install(packages = c("numpy", "pandas"),
+                                 envname = "r-reticulate",
+                                 pip = TRUE, pip_ignore_installed = TRUE)
 
-      - name: Confirm Python and import Numpy
+      - name: Confirm Python and import Numpy, Pandas
         run: |
-          Rscript -e "reticulate::py_config()"
-          Rscript -e "reticulate::import('numpy')"
+          print(reticulate::py_config())
+          print(reticulate::import('numpy'))
+          print(reticulate::import('pandas'))
 
-      - uses: r-lib/actions/check-r-package@v1
+      - uses: r-lib/actions/check-r-package@v2
