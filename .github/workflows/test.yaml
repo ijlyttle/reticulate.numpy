@@ -1,0 +1,18 @@
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: test variables
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+  steps:
+    - name:test
+      run: |
+        RMD_PATH=($(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '[.]Rmd$'))
+        echo RMD_PATH
